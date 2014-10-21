@@ -7,15 +7,18 @@
 tBoolean led_on;
 
 void blink(void) {
-    SetPin(PIN_F1, led_on);
+    SetPin(PIN_E3, led_on);
 
-    led_on = !led_on;
+    led_on = !led_on; 
 }
 
 int main(void) {  
     char ch;
     CallEvery(blink, 0, 0.25f);
-
+		SetPin(PIN_B5, true);
+		SetPin(PIN_B0, true);
+		//SetPin(PIN_B2, true);
+		//SetPin(PIN_E0, true);
     while(1) {
         Printf("\nRAS Demo for Robotathon 2013\n");
         Printf("  0=UART Demo\n  1=Motor Demo\n");
