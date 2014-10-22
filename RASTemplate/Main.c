@@ -18,8 +18,8 @@ int rightVolt;
 int turnLeft;
 const int minVoltageDis=2.00;
 
-void blink(void) {
-    SetPin(PIN_F2, blink_on);
+/*void blink(void) {
+    SetPin(PIN_F3, blink_on);
     blink_on = !blink_on;
 }
 
@@ -40,23 +40,23 @@ int irServoTurn(void) {
 			SetMotor(irServo, 1.0f);
 			rightVolt=ADCRead(servoIR);
 			if (leftVolt > rightVolt) {
-			turnLeft=false;
+				turnLeft=false;
 			}
 			else {
 				turnLeft=true;
 			}
 			return turnLeft;
 }
-
+*/
 // The 'main' function is the entry point of the program
 int count=0;
 int main(void) {
     // Initialization code can go here
     //CallEvery(blink, 0, 0.5);
 		rightM = InitializeServoMotor(PIN_B5, false);
-		leftM = InitializeServoMotor(PIN_B0, true);
-		irServo = InitializeServoMotor(PIN_B3, true);
-		frontIR = InitializeADC(PIN_A7);
+		leftM = InitializeServoMotor(PIN_B6, true);
+		irServo = InitializeServoMotor(PIN_B7, true);
+		frontIR = InitializeADC(PIN_A5);
 		ADCReadContinuously(frontIR, 0.25f);	
     while (1) {
         // Runtime code can go here
@@ -67,13 +67,14 @@ int main(void) {
 				if (frontIRVolt >= minVoltageDis) {
 					//begin IRsensor turn, not sure about distance
 					//WAIT
-					turnLeft=irServoTurn();
-					SetPin(PIN_F3, true);
+					//turnLeft=irServoTurn();
+					//SetPin(PIN_F3, true);
 				}
         else {
-					SetPin(PIN_F3, false);
+					//SetPin(PIN_F3, false);
 
 				}
 				count+=1;
 	}
 }
+
