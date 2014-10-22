@@ -37,7 +37,7 @@ int main(void) {
 				frontSensor=ADCRead(irSensor);
 				if (frontSensor >= minVoltageDis) {
 					//begin IRsensor turn, not sure about distance
-					SetMotor(irSensor, .25f);
+					SetMotor(irServo, .25f);
 				}
 				
         
