@@ -14,22 +14,33 @@ void blink(void) {
 
 
 // The 'main' function is the entry point of the program
-tMotor* test;
-tMotor* fuckThisShitIAmSoDone;
+tMotor* rightM;
+tMotor* leftM;
+tMotor* irServo;
 tADC* irSensor;
+int frontSensor;
+const int minVoltageDis;
 int main(void) {
     // Initialization code can go here
     CallEvery(blink, 0, 0.5);
-		test = InitializeServoMotor(PIN_B5, false);
-		fuckThisShitIAmSoDone = InitializeServoMotor(PIN_B0, true);
+		rightM = InitializeServoMotor(PIN_B5, false);
+		leftM = InitializeServoMotor(PIN_B0, true);
+		irServo = InitializeServoMotor(PIN_B3, true);
+		SetPin(PIN_B0,true);
+		irSensor = InitializeADC(PIN_F2);
+		ADCReadContinuously(irSensor, 0.25f);	
     while (1) {
         // Runtime code can go here
         Printf("Hello World!\n");
-				SetMotor(test, .25f);
-				SetMotor(fuckThisShitIAmSoDone, .25f);
+				SetMotor(leftM, .25f);
+				SetMotor(rightM, .25f);
+				frontSensor=ADCRead(irSensor);
+				if (frontSensor >= minVoltageDis) {
+					//begin IRsensor turn, not sure about distance
+					SetMotor(irSensor, .25f);
+				}
 				
         
     }
-		irSensor = InitializeADC(PIN_F2);
-		ADCReadContinuously(irSensor, 0.1f);
+
 }
