@@ -279,7 +279,6 @@ void (* const __Vectors[])(void) = {
 void ResetHandler(void) {
     register unsigned long *src;
     register unsigned long *dest;
-
     // Copy the data segment initializers from flash to SRAM.
     src = DATA_LOAD;
     dest = DATA_START;
