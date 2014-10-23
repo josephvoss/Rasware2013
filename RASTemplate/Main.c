@@ -36,8 +36,10 @@ void turn(turnL) {
 
 int irServoTurn(void) {
 			SetMotor(irServo, -1.0f);
+			delay?
 			leftVolt=ADCRead(servoIR);
 			SetMotor(irServo, 1.0f);
+			delay?
 			rightVolt=ADCRead(servoIR);
 			if (leftVolt > rightVolt) {
 				turnLeft=false;
@@ -68,6 +70,10 @@ int main(void) {
 					//begin IRsensor turn, not sure about distance
 					//WAIT
 					//turnLeft=irServoTurn();
+					//how long does irServoTurn take to run? Might slow down
+					//robo if called here. Can find a way to it call continuously
+					//and not interfer with speed/other calls?
+					//turn(turnLeft);
 					//SetPin(PIN_F3, true);
 				}
         else {
