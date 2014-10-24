@@ -18,7 +18,9 @@ int leftVolt;
 int rightVolt;
 int turnLeft;
 const int minVoltageDis=2.00;
-
+float irServoTurnCount = 0.0;
+float irDeltaTurn=0.25f;
+int endOfTurn;
 void blink(void) {
     SetPin(PIN_F3, blink_on);
     blink_on = !blink_on;
@@ -36,16 +38,24 @@ void turn(turnL) {
 }
 
 int irServoTurn(void) {
-			SetMotor(irServo, -1.0f);
-			//delay?
+			SetMotor(irServo, irDeltaTurn);
+			irServoTurnCount += irDeltaTurn;
+			if (irServoTurnCount == 1.0) {
 			leftVolt=ADCRead(servoIR);
-			SetMotor(irServo, 1.0f);
-			//delay?
+			//switches delta to negative to have sensor turn other way
+			irDeltaTurn = -1*irDeltaTurn;
+			endOfTurn=true;
+			}
+			if (irServoTurnCount == 0.0) {
 			rightVolt=ADCRead(servoIR);
-			if (leftVolt > rightVolt) {
+			irDeltaTurn = -1*irDeltaTurn;
+			endOfTurn=true;
+			}
+			if (leftVolt > rightVolt && endOfTurn) {
 				turnLeft=false;
 			}
 			else {
+				//edit for end of turn
 				turnLeft=true;
 			}
 			return turnLeft;
