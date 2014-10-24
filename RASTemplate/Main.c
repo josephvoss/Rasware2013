@@ -28,17 +28,17 @@ void blink(void) {
 
 void turn(turnL) {
 	if (turnL) {
-		SetMotor(leftM, 1.0f);
-		SetMotor(rightM, -1.0f);
+		SetMotor(leftM, -1.0f);
+		SetMotor(rightM, 0.0f);
 	}
 	else {
-		SetMotor(leftM, -1.0f);
+		SetMotor(leftM, 1.0f);
 		SetMotor(rightM, -1.0f);
 	}
 }
 
 int irServoTurn(void) {
-			SetMotor(irServo, irDeltaTurn);
+/*			SetMotor(irServo, irDeltaTurn);
 			irServoTurnCount += irDeltaTurn;
 			if (irServoTurnCount == 1.0) {
 			leftVolt=ADCRead(servoIR);
@@ -54,9 +54,20 @@ int irServoTurn(void) {
 			if (leftVolt > rightVolt && endOfTurn) {
 				turnLeft=false;
 			}
-			else {
+			if (endOfTurn) {
 				//edit for end of turn
 				turnLeft=true;
+			}
+			return turnLeft; */
+			SetMotor(irServo, 1.0f);
+			leftVolt=(int) (ADCRead(servoIR)*100);
+			SetMotor(irServo, 0.0f);
+			rightVolt=(int) (ADCRead(servoIR)*100);
+			if (leftVolt<rightVolt) {
+				turnLeft=true;
+			}
+			else {
+				turnLeft=false;
 			}
 			return turnLeft;
 }
@@ -80,22 +91,17 @@ int main(void) {
 				SetMotor(rightM, .25f);
 				frontIRVolt=(int) (ADCRead(frontIR)*100);
 				Printf("%02d\n", frontIRVolt);
-				if (frontIRVolt >= minVoltageDis) {
+				while (frontIRVolt >= minVoltageDis) {
 					//begin IRsensor turn, not sure about distance
 					//WAIT
-					//turnLeft=irServoTurn();
+					turnLeft=irServoTurn();
 					//how long does irServoTurn take to run? Might slow down
 					//robo if called here. Can find a way to it call continuously
 					//and not interfer with speed/other calls?
-					//turn(turnLeft);
+					turn(turnLeft);
 					SetPin(PIN_F2, true);
-					SetMotor(rightM, -.25f);
-					SetMotor(leftM, -0.25f);
 				}
 				
-        else {
-					SetPin(PIN_F2, false);
-				}
 				count+=1;
 	}
 }
