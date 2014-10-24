@@ -14,15 +14,15 @@ tMotor* irServo;
 tADC* frontIR;
 tADC* servoIR;
 int frontIRVolt;
-int leftVolt;
-int rightVolt;
+double leftVolt;
+double rightVolt;
 int turnLeft;
-const int minVoltageDis=2.00;
+int minVoltageDis=17;
 float irServoTurnCount = 0.0;
 float irDeltaTurn=0.25f;
 int endOfTurn;
 void blink(void) {
-    SetPin(PIN_F3, blink_on);
+    SetPin(PIN_F1, blink_on);
     blink_on = !blink_on;
 }
 
@@ -67,39 +67,34 @@ int count=0;
 int main(void) {
     // Initialization code can go here
 		Printf("Not dead");
-    CallEvery(blink, 0, 0.5);
+    CallEvery(blink, 0, .25);
 		rightM = InitializeServoMotor(PIN_B5, false);
 		leftM = InitializeServoMotor(PIN_B6, true);
 		irServo = InitializeServoMotor(PIN_B7, true);
-		frontIR = InitializeADC(PIN_A5);
-		//ADCReadContinuously(frontIR, 0.25f);	
+		frontIR = InitializeADC(PIN_D0);
+		ADCReadContinuously(frontIR, 0.25f);	
     while (1) {
         // Runtime code can go here
         //Printf("Hello World!\n");
 				SetMotor(leftM, .25f);
 				SetMotor(rightM, .25f);
-				//divide ADC by 1024 cause the guy across the table told me to
-				//jk its actually b/c the adc output 1-1024, used to get a percentage
-				//multiply by 3.3 to express percentage as a voltage
-				frontIRVolt=ADCRead(frontIR)/1024 * 3.3;
-				//drunk Joseph typed this, he had no idea what it does
-				//need to change frontIRVolt to const char* to print out
-				//how do
-				//halp
-				const char* dig = (char*)(((int)'0')+frontIRVolt);
-				Printf(dig);
+				frontIRVolt=(int) (ADCRead(frontIR)*100);
+				Printf("%02d\n", frontIRVolt);
 				if (frontIRVolt >= minVoltageDis) {
 					//begin IRsensor turn, not sure about distance
 					//WAIT
-					turnLeft=irServoTurn();
+					//turnLeft=irServoTurn();
 					//how long does irServoTurn take to run? Might slow down
 					//robo if called here. Can find a way to it call continuously
 					//and not interfer with speed/other calls?
-					turn(turnLeft);
-					SetPin(PIN_F3, true);
+					//turn(turnLeft);
+					SetPin(PIN_F2, true);
+					SetMotor(rightM, -.25f);
+					SetMotor(leftM, -0.25f);
 				}
+				
         else {
-					
+					SetPin(PIN_F2, false);
 				}
 				count+=1;
 	}
