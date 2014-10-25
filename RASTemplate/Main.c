@@ -81,8 +81,9 @@ int main(void) {
     CallEvery(blink, 0, .25);
 		rightM = InitializeServoMotor(PIN_B5, false);
 		leftM = InitializeServoMotor(PIN_B6, true);
-		irServo = InitializeServoMotor(PIN_B7, true);
+		irServo = InitializeServoMotor(PIN_B3, true);
 		frontIR = InitializeADC(PIN_D0);
+		servoIR = InitializeADC(PIN_D1);
 		ADCReadContinuously(frontIR, 0.25f);	
     while (1) {
         // Runtime code can go here
@@ -100,9 +101,9 @@ int main(void) {
 					//and not interfer with speed/other calls?
 					turn(turnLeft);
 					SetPin(PIN_F2, true);
+					frontIRVolt=(int) (ADCRead(frontIR)*100);
 				}
-				
-				count+=1;
+				SetPin(PIN_F2, false);
 	}
 }
 
