@@ -3,6 +3,7 @@
 #include <RASLib/inc/time.h>
 #include <RASLib/inc/motor.h>
 #include <RASLib/inc/adc.h>
+#include <RASLib/inc/linesensor.h>
 
 // Blink the LED to show we're on
 
@@ -13,6 +14,7 @@ tMotor* leftM;
 tMotor* irServo;
 tADC* frontIR;
 tADC* servoIR;
+tLineSensor* lineSensor; 
 int frontIRVolt;
 double leftVolt;
 double rightVolt;
@@ -21,6 +23,8 @@ int minVoltageDis=17;
 float irServoTurnCount = 0.0;
 float irDeltaTurn=0.25f;
 int endOfTurn;
+int lineSensorArrayVolt;
+float lineArray[8];
 
 void blink(void) {
     SetPin(PIN_F1, blink_on);
@@ -93,15 +97,27 @@ int main(void) {
 	irServo = InitializeServoMotor(PIN_B3, true);
 	frontIR = InitializeADC(PIN_D0);
 	servoIR = InitializeADC(PIN_D1);
-	ADCReadContinuously(frontIR, 0.25f);	
-
+	ADCReadContinuously(frontIR, 0.25f);
+	lineSensor = InitializeGPIOLineSensor(PIN_A2, PIN_A3, PIN_A4, PIN_B6, PIN_B7, PIN_F0, PIN_E0, PIN_B2);
     while (1) {
         // Runtime code can go here
         //Printf("Hello World!\n");
+		
+		LineSensorReadArray(lineSensor, lineArray);
+		Printf("%02d\n", lineArray);
+		Printf("%d\n", lineArray[0]);
+		Printf("%d\n", lineArray[1]);
+		Printf("%d\n", lineArray[2]);
+		Printf("%d\n", lineArray[3]);
+		Printf("%d\n", lineArray[4]);
+		Printf("%d\n", lineArray[5]);
+		Printf("%d\n", lineArray[6]);
+		Printf("%d\n", lineArray[7]);
+		
 		SetMotor(leftM, .25f);
 		SetMotor(rightM, .25f);
 		frontIRVolt=(int) (ADCRead(frontIR)*100);
-		Printf("%02d\n", frontIRVolt);
+		//Printf("%02d\n", frontIRVolt);
 		
 		////////////////////////////////////////////////////////////	-Peter-	   ////////////////////////////////////////////////////
 		// If I am thinking about this correctly, won't this take forever?															 //
