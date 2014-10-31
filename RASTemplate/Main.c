@@ -4,6 +4,7 @@
 #include <RASLib/inc/motor.h>
 #include <RASLib/inc/adc.h>
 #include <RASLib/inc/linesensor.h>
+#include <RASLib/inc/servo.h>
 #include <math.h>
 // Blink the LED to show we're on
 
@@ -12,7 +13,7 @@ tBoolean fuck;
 
 tMotor* rightM;
 tMotor* leftM;
-tMotor* irServo;
+tServo* irServo;
 tADC* frontIR;
 tADC* servoIR;
 tLineSensor* lineSensor; 
@@ -74,9 +75,9 @@ int irServoTurn(void) {
 	// https://github.com/ut-ras/Rasware2013/wiki/servo.h 						 //
 	///////////////////////////////////////////////////////////////////////////////
 
-	SetMotor(irServo, 1.0f);
+	SetServo(irServo, 1.0f);
 	leftVolt=(int) (ADCRead(servoIR)*100);
-	SetMotor(irServo, 0.0f);
+	SetServo(irServo, 0.0f);
 	rightVolt=(int) (ADCRead(servoIR)*100);
 	if (leftVolt<rightVolt) {
 		turnLeft=true;
@@ -96,7 +97,7 @@ int main(void) {
     CallEvery(blink, 0, .25);
 	rightM = InitializeServoMotor(PIN_B5, false);
 	leftM = InitializeServoMotor(PIN_B6, true);
-	irServo = InitializeServoMotor(PIN_B3, true);
+	irServo = InitializeServo(PIN_B3);
 	frontIR = InitializeADC(PIN_D0);
 	servoIR = InitializeADC(PIN_D1);
 	ADCReadContinuously(frontIR, 0.25f);
