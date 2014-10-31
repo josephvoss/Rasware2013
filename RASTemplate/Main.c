@@ -4,10 +4,11 @@
 #include <RASLib/inc/motor.h>
 #include <RASLib/inc/adc.h>
 #include <RASLib/inc/linesensor.h>
-
+#include <math.h>
 // Blink the LED to show we're on
 
 tBoolean blink_on = true;
+tBoolean fuck;
 
 tMotor* rightM;
 tMotor* leftM;
@@ -18,6 +19,7 @@ tLineSensor* lineSensor;
 int frontIRVolt;
 double leftVolt;
 double rightVolt;
+int i;
 int turnLeft;
 int minVoltageDis=17;
 float irServoTurnCount = 0.0;
@@ -102,18 +104,16 @@ int main(void) {
     while (1) {
         // Runtime code can go here
         //Printf("Hello World!\n");
-		
 		LineSensorReadArray(lineSensor, lineArray);
-		Printf("%02d\n", lineArray);
-		Printf("%d\n", lineArray[0]);
-		Printf("%d\n", lineArray[1]);
-		Printf("%d\n", lineArray[2]);
-		Printf("%d\n", lineArray[3]);
-		Printf("%d\n", lineArray[4]);
-		Printf("%d\n", lineArray[5]);
-		Printf("%d\n", lineArray[6]);
-		Printf("%d\n", lineArray[7]);
+		//Printf("%02f\n", lineArray[7]);
 		
+		for (i=0;i < 8;i++) {
+			if(!isinf(lineArray[i])) {
+				Printf("%.2f\t",lineArray[i]);
+			}
+		}
+		//Printf("\n");
+		//Printf("%d\n", fuck);
 		SetMotor(leftM, .25f);
 		SetMotor(rightM, .25f);
 		frontIRVolt=(int) (ADCRead(frontIR)*100);
@@ -124,6 +124,9 @@ int main(void) {
 		// The IR sensor will look left and right, then the robot will move a little, then the IR sensor will look around again, etc.//
 		// Until there's no longer a wall in front 																					 //
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		
+		/* comment out front IR test while working on line sensor
 		while (frontIRVolt >= minVoltageDis) {
 			//begin IRsensor turn, not sure about distance
 			//WAIT
@@ -134,7 +137,7 @@ int main(void) {
 			turn(turnLeft);
 			SetPin(PIN_F2, true);
 			frontIRVolt=(int) (ADCRead(frontIR)*100);
-		}
+		}*/
 
 		SetPin(PIN_F2, false);
 	}
