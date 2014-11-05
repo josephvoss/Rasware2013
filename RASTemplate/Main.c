@@ -163,6 +163,7 @@ int main(void) {
 		Printf("%.2f\n",lineArray[7]);
 
 		//go line follower function
+		
 		//runLineFollower();
 		//THERE CAN ONLY BE ONE...comment
 		//(if un-comment runLineFollower, comment out this to avoid reading twice
