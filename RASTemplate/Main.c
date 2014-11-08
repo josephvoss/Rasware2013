@@ -100,42 +100,51 @@ void runLineFollower(void) {
 		//turn hard left
 		SetMotor(leftM, .1f);
 		SetMotor(rightM, .15f);
+		Printf("hard left");
 	}
 	else if(lineArray[1]>1.0) {
 		//medium left
 		SetMotor(leftM, .1f);
 		SetMotor(rightM, .134f);
+		Printf("medium left");
 	}
 	else if(lineArray[2]>1.0) {
 		//soft left
 		SetMotor(leftM, .1f);
 		SetMotor(rightM, .117f);
+		Printf("soft left");
 	}
 	else if(lineArray[3]>1.0) {
 		//straight
 		SetMotor(leftM, .1f);
 		SetMotor(rightM, .1f);
+		Printf("straight");
 	}
 	else if(lineArray[4]>1.0) {
 		//straight
 		SetMotor(leftM, .1f);
 		SetMotor(rightM, .1f);
+		Printf("straight");
 	}
 	else if(lineArray[5]>1.0) {
 		//soft right
 		SetMotor(leftM, .117f);
 		SetMotor(rightM, .1f);
+		Printf("soft right");
 	}
 	else if(lineArray[6]>1.0) {
 		//medium right
 		SetMotor(leftM, .134f);
 		SetMotor(rightM, .1f);
+		Printf("medium right");
 	}
 	else if(lineArray[7]>1.0) {
 		//hard right
 		SetMotor(leftM, .15f);
 		SetMotor(rightM, .1f);
+		Printf("hard right");
 	}
+	Printf("\n");
 }
 
 int main(void) {
@@ -153,7 +162,7 @@ int main(void) {
 	while (1) {
         // Runtime code can go here
     //Printf("Hello World!\n");
-	  Printf("%.2f\t",lineArray[0]);
+	  /*Printf("%.2f\t",lineArray[0]);
 		Printf("%.2f\t",lineArray[1]);
 		Printf("%.2f\t",lineArray[2]);
 		Printf("%.2f\t",lineArray[3]);
@@ -161,13 +170,15 @@ int main(void) {
 		Printf("%.2f\t",lineArray[5]);
 		Printf("%.2f\t",lineArray[6]);
 		Printf("%.2f\n",lineArray[7]);
-
+*/
+		
 		//go line follower function
 		
-		//runLineFollower();
+		
+		runLineFollower();
 		//THERE CAN ONLY BE ONE...comment
 		//(if un-comment runLineFollower, comment out this to avoid reading twice
-		LineSensorReadArray(lineSensor, lineArray); 
+		//LineSensorReadArray(lineSensor, lineArray); 
 		
 		//comment out motors to avoid un-desirable enhanced robotic mobility capabilities
 		//SetMotor(leftM, .1f);
