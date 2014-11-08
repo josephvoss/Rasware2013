@@ -91,6 +91,15 @@ int irServoTurn(void) {
 // The 'main' function is the entry point of the program
 int count=0;
 
+void move(float left, float right) {
+	SetMotor(leftM, left);
+	SetMotor(rightM, right);
+}
+
+void stopMotors(void) {
+	SetMotor(leftM, .0f);
+	SetMotor(rightM, .0f);
+}
 
 //First attempt at line following code. Feel free to change/alter/take apart/mutilate -J
 //NOT TESTED WITH BATTERY, or at all really
@@ -143,9 +152,12 @@ void runLineFollower(void) {
 		SetMotor(leftM, .15f);
 		SetMotor(rightM, .1f);
 		Printf("hard right");
+	} else {
+		stopMotors();
 	}
 	Printf("\n");
 }
+	
 
 int main(void) {
     // Initialization code can go here
@@ -160,6 +172,18 @@ int main(void) {
 	lineSensor = InitializeGPIOLineSensor(PIN_A2, PIN_A3, PIN_A4, PIN_B6, PIN_B7, PIN_F0, PIN_E0, PIN_B2);
   LineSensorReadContinuously(lineSensor, 0.f);
 	while (1) {
+		//SetMotor(leftM, .2f);
+		//SetMotor(rightM, .2f);
+		LineSensorReadArray(lineSensor, lineArray); 
+		
+		if(lineArray[4] > .5f) {
+			stopMotors();
+		} else {		
+			move(.2f, .2f);
+		}
+		
+		
+		
         // Runtime code can go here
     //Printf("Hello World!\n");
 	  /*Printf("%.2f\t",lineArray[0]);
@@ -175,7 +199,7 @@ int main(void) {
 		//go line follower function
 		
 		
-		runLineFollower();
+		//runLineFollower();
 		//THERE CAN ONLY BE ONE...comment
 		//(if un-comment runLineFollower, comment out this to avoid reading twice
 		//LineSensorReadArray(lineSensor, lineArray); 
