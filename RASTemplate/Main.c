@@ -5,11 +5,11 @@
 #include <RASLib/inc/adc.h>
 #include <RASLib/inc/linesensor.h>
 #include <RASLib/inc/servo.h>
+#include <stdbool.h>
 #include <math.h>
 // Blink the LED to show we're on
 
 tBoolean blink_on = true;
-tBoolean fuck;
 
 tMotor* rightM;
 tMotor* leftM;
@@ -93,7 +93,7 @@ int count=0;
 
 void move(float left, float right) {
 	SetMotor(leftM, left);
-	SetMotor(rightM, right);
+	SetMotor(rightM, right*1.19f);
 }
 
 void stopMotors(void) {
@@ -101,70 +101,20 @@ void stopMotors(void) {
 	SetMotor(rightM, .0f);
 }
 
-//First attempt at line following code. Feel free to change/alter/take apart/mutilate -J
-//NOT TESTED WITH BATTERY, or at all really
-void runLineFollower(void) {
-	LineSensorReadArray(lineSensor, lineArray); 
-	if (lineArray[0]>1.0) {
-		//turn hard left
-		SetMotor(leftM, .1f);
-		SetMotor(rightM, .15f);
-		Printf("hard left");
-	}
-	else if(lineArray[1]>1.0) {
-		//medium left
-		SetMotor(leftM, .1f);
-		SetMotor(rightM, .134f);
-		Printf("medium left");
-	}
-	else if(lineArray[2]>1.0) {
-		//soft left
-		SetMotor(leftM, .1f);
-		SetMotor(rightM, .117f);
-		Printf("soft left");
-	}
-	else if(lineArray[3]>1.0) {
-		//straight
-		SetMotor(leftM, .1f);
-		SetMotor(rightM, .1f);
-		Printf("straight");
-	}
-	else if(lineArray[4]>1.0) {
-		//straight
-		SetMotor(leftM, .1f);
-		SetMotor(rightM, .1f);
-		Printf("straight");
-	}
-	else if(lineArray[5]>1.0) {
-		//soft right
-		SetMotor(leftM, .117f);
-		SetMotor(rightM, .1f);
-		Printf("soft right");
-	}
-	else if(lineArray[6]>1.0) {
-		//medium right
-		SetMotor(leftM, .134f);
-		SetMotor(rightM, .1f);
-		Printf("medium right");
-	}
-	else if(lineArray[7]>1.0) {
-		//hard right
-		SetMotor(leftM, .15f);
-		SetMotor(rightM, .1f);
-		Printf("hard right");
+bool isBlack(float x) {
+	if(isinf(x) || x > 1) {
+		return true;
 	} else {
-		stopMotors();
+		return false;
 	}
-	Printf("\n");
 }
-	
 
 int main(void) {
     // Initialization code can go here
 	Printf("Not dead");
     CallEvery(blink, 0, .25);
-	rightM = InitializeServoMotor(PIN_C7, true);
-	leftM = InitializeServoMotor(PIN_B5, false);
+	rightM = InitializeServoMotor(PIN_C6, true);
+	leftM = InitializeServoMotor(PIN_E4, false);
 	irServo = InitializeServo(PIN_B3);
 	frontIR = InitializeADC(PIN_D0);
 	servoIR = InitializeADC(PIN_D1);
@@ -172,21 +122,32 @@ int main(void) {
 	lineSensor = InitializeGPIOLineSensor(PIN_A2, PIN_A3, PIN_A4, PIN_B6, PIN_B7, PIN_F0, PIN_E0, PIN_B2);
   LineSensorReadContinuously(lineSensor, 0.f);
 	while (1) {
-		//SetMotor(leftM, .2f);
-		//SetMotor(rightM, .2f);
-		LineSensorReadArray(lineSensor, lineArray); 
+		LineSensorReadArray(lineSensor, lineArray);
 		
-		if(lineArray[4] > .5f) {
+		if(!isBlack(lineArray[6]) || !isBlack(lineArray[7])) {
+			move(.1f, .0f);
+		} else if(!isBlack(lineArray[0]) || !isBlack(lineArray[1])) {
+			move(.0f, .1f);
+		} else if(!isBlack(lineArray[3]) || !isBlack(lineArray[4])) {
+			move(.1f, .1f);
+		} else {
+		
+			move(.1f, .1f);
+	}
+		
+		/*
+		float side = lineArray[7] - lineArray[0];
+		if(lineArray[7] > .5f) {
 			stopMotors();
 		} else {		
 			move(.2f, .2f);
 		}
-		
+		*/
 		
 		
         // Runtime code can go here
     //Printf("Hello World!\n");
-	  /*Printf("%.2f\t",lineArray[0]);
+	  Printf("%.2f\t",lineArray[0]);
 		Printf("%.2f\t",lineArray[1]);
 		Printf("%.2f\t",lineArray[2]);
 		Printf("%.2f\t",lineArray[3]);
@@ -194,7 +155,6 @@ int main(void) {
 		Printf("%.2f\t",lineArray[5]);
 		Printf("%.2f\t",lineArray[6]);
 		Printf("%.2f\n",lineArray[7]);
-*/
 		
 		//go line follower function
 		
