@@ -34,16 +34,16 @@ void blink(void) {
     blink_on = !blink_on;
 }
 
-void turn(turnL) {
-	if (turnL) {
-		SetMotor(leftM, -1.0f);
-		SetMotor(rightM, 1.0f);
-	}
-	else {
-		SetMotor(leftM, 1.0f);
-		SetMotor(rightM, -1.0f);
-	}
+void turn(void) {
+	SetServo(irServo, 0);
+	float left = irSensor()
+	SetServo(irServo, 180)
+	float right = irSensor()
+	if(left > right) 
+		
 }
+
+
 
 int irServoTurn(void) {
 /*	SetMotor(irServo, irDeltaTurn);
@@ -125,15 +125,16 @@ int main(void) {
 		LineSensorReadArray(lineSensor, lineArray);
 		
 		if(!isBlack(lineArray[6]) || !isBlack(lineArray[7])) {
-			move(.1f, .0f);
+			move(.1f, -.1f);
 		} else if(!isBlack(lineArray[0]) || !isBlack(lineArray[1])) {
-			move(.0f, .1f);
+			move(-.1f, .1f);
 		} else if(!isBlack(lineArray[3]) || !isBlack(lineArray[4])) {
 			move(.1f, .1f);
+		} else if(FRONTIR < MINDISTANCE) {
+			turn90();
 		} else {
-		
 			move(.1f, .1f);
-	}
+		}
 		
 		/*
 		float side = lineArray[7] - lineArray[0];
