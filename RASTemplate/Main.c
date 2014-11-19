@@ -7,7 +7,7 @@
 #include <RASLib/inc/servo.h>
 #include <stdbool.h>
 #include <math.h>
-// Blink the LED to show we're on
+#include <RASLib/inc/time.h>
 
 tBoolean blink_on = true;
 
@@ -18,11 +18,12 @@ tADC* frontIR;
 tADC* servoIR;
 tLineSensor* lineSensor; 
 int frontIRVolt;
+int servoIRVolt;
 double leftVolt;
 double rightVolt;
 int i;
 int turnLeft;
-int minVoltageDis=17;
+int minVoltDis=50;
 float irServoTurnCount = 0.0;
 float irDeltaTurn=0.25f;
 int endOfTurn;
@@ -36,14 +37,12 @@ void blink(void) {
 
 void turn(void) {
 	SetServo(irServo, 0);
-	float left = irSensor()
-	SetServo(irServo, 180)
-	float right = irSensor()
-	if(left > right) 
+	//float left = irSensor();
+	SetServo(irServo, 180);
+	//float right = irSensor();
+	//if(left > right);
 		
 }
-
-
 
 int irServoTurn(void) {
 /*	SetMotor(irServo, irDeltaTurn);
@@ -118,7 +117,8 @@ int main(void) {
 	irServo = InitializeServo(PIN_B3);
 	frontIR = InitializeADC(PIN_D0);
 	servoIR = InitializeADC(PIN_D1);
-	ADCReadContinuously(frontIR, 0.25f);
+	ADCReadContinuously(frontIR, 0.0f);
+	ADCReadContinuously(servoIR, 0.0f);
 	lineSensor = InitializeGPIOLineSensor(PIN_A2, PIN_A3, PIN_A4, PIN_B6, PIN_B7, PIN_F0, PIN_E0, PIN_B2);
   LineSensorReadContinuously(lineSensor, 0.f);
 	while (1) {
@@ -130,9 +130,9 @@ int main(void) {
 			move(-.1f, .1f);
 		} else if(!isBlack(lineArray[3]) || !isBlack(lineArray[4])) {
 			move(.1f, .1f);
-		} else if(FRONTIR < MINDISTANCE) {
+		} /*else if(FRONTIR < MINDISTANCE) {
 			turn90();
-		} else {
+		}*/ else {
 			move(.1f, .1f);
 		}
 		
@@ -148,7 +148,8 @@ int main(void) {
 		
         // Runtime code can go here
     //Printf("Hello World!\n");
-	  Printf("%.2f\t",lineArray[0]);
+	  /*
+		Printf("%.2f\t",lineArray[0]);
 		Printf("%.2f\t",lineArray[1]);
 		Printf("%.2f\t",lineArray[2]);
 		Printf("%.2f\t",lineArray[3]);
@@ -156,7 +157,7 @@ int main(void) {
 		Printf("%.2f\t",lineArray[5]);
 		Printf("%.2f\t",lineArray[6]);
 		Printf("%.2f\n",lineArray[7]);
-		
+		*/
 		//go line follower function
 		
 		
@@ -173,8 +174,8 @@ int main(void) {
 		//Gross icky line follower stuff
 		
 		
-		//frontIRVolt=(int) (ADCRead(frontIR)*100);
-		//Printf("%02d\n", frontIRVolt);
+		frontIRVolt=(int) (ADCRead(frontIR)*100);
+		Printf("%02d\n", frontIRVolt);
 		
 		////////////////////////////////////////////////////////////	-Peter-	   ////////////////////////////////////////////////////
 		// If I am thinking about this correctly, won't this take forever?															 //
@@ -183,20 +184,26 @@ int main(void) {
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		
-		/* comment out front IR test while working on line sensor
-		while (frontIRVolt >= minVoltageDis) {
+		if (frontIRVolt >= minVoltDis) {
 			//begin IRsensor turn, not sure about distance
 			//WAIT
-			turnLeft=irServoTurn();
+			//turnLeft=irServoTurn();
 			//how long does irServoTurn take to run? Might slow down
 			//robo if called here. Can find a way to it call continuously
 			//and not interfer with speed/other calls?
-			turn(turnLeft);
+			//turn(turnLeft);
 			SetPin(PIN_F2, true);
-			frontIRVolt=(int) (ADCRead(frontIR)*100);
-		}*/
-
+		}
+		else {
 		SetPin(PIN_F2, false);
 	}
+	
+	if (servoIRVolt >= minVoltDis) {
+		SetPin(PIN_F3, true);
+	}
+	else {
+		SetPin(PIN_F3, false);
+	}
+}
 }
 
