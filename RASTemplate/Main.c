@@ -18,7 +18,7 @@ tADC* frontIR;
 tADC* servoIR;
 tLineSensor* lineSensor; 
 int frontIRVolt;
-int servoIRVolt;
+int servoIRVolts[2];
 double leftVolt;
 double rightVolt;
 int i;
@@ -31,7 +31,7 @@ int lineSensorArrayVolt;
 float lineArray[8];
 
 void blink(void) {
-    SetPin(PIN_F1, blink_on);
+    SetPin(PIN_F0, blink_on);
     blink_on = !blink_on;
 }
 
@@ -108,6 +108,25 @@ bool isBlack(float x) {
 	}
 }
 
+int* irServoMeasure(int* grossArrayThing) {
+	//Moves the servo returns 2 measurements of IR
+	SetServo(irServo, 1.0f);
+	grossArrayThing[0]=(int) (ADCRead(servoIR)*100);
+	SetServo(irServo, -1.0f);
+	grossArrayThing[1]=(int) (ADCRead(servoIR)*100);
+	return grossArrayThing;
+}
+
+void irServoMove(int* grossArrayThing) {
+	//takes in 2 measurements of ir and turns robrot
+	if (grossArrayThing[0] >= minVoltDis) {
+		//turn one way
+	}
+	else if (grossArrayThing[1] >= minVoltDis) {
+		//turn other way bruh
+	}
+}
+
 int main(void) {
     // Initialization code can go here
 	Printf("Not dead");
@@ -175,7 +194,9 @@ int main(void) {
 		
 		
 		frontIRVolt=(int) (ADCRead(frontIR)*100);
-		Printf("%02d\n", frontIRVolt);
+		Printf("%02d\t", frontIRVolt);
+		//servoIRVolt=(int) (ADCRead(servoIR)*100);
+		//Printf("%02d\n", servoIRVolt);
 		
 		////////////////////////////////////////////////////////////	-Peter-	   ////////////////////////////////////////////////////
 		// If I am thinking about this correctly, won't this take forever?															 //
@@ -184,26 +205,24 @@ int main(void) {
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		
+		
+		//Measures front IR, if within wall distance, turn blue LED on
 		if (frontIRVolt >= minVoltDis) {
-			//begin IRsensor turn, not sure about distance
-			//WAIT
-			//turnLeft=irServoTurn();
-			//how long does irServoTurn take to run? Might slow down
-			//robo if called here. Can find a way to it call continuously
-			//and not interfer with speed/other calls?
-			//turn(turnLeft);
-			SetPin(PIN_F2, true);
+			SetPin(PIN_F1, true);
+			
+			irServoMeasure(servoIRVolts);
+			irServoMove(servoIRVolts);
 		}
 		else {
-		SetPin(PIN_F2, false);
+		SetPin(PIN_F1, false);
 	}
 	
-	if (servoIRVolt >= minVoltDis) {
-		SetPin(PIN_F3, true);
+	/*if (servoIRVolt >= minVoltDis) {
+		SetPin(PIN_F2, true);
 	}
 	else {
-		SetPin(PIN_F3, false);
-	}
+		SetPin(PIN_F2, false);
+	}*/
 }
 }
 
