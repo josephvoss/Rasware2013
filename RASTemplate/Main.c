@@ -49,7 +49,7 @@ void blink(void) {
 // The 'main' function is the entry point of the program
 int count=0;
 
-void turnleft(bool gleft) {
+void turnleft(bool left) {
 	if (left) {
 		SetMotor(leftM, 1.0f);
 		SetMotor(rightM, -1.19f);
@@ -130,7 +130,9 @@ int main(void) {
 	/*
 	lineSensor = InitializeGPIOLineSensor(PIN_A2, PIN_A3, PIN_A4, PIN_B6, PIN_B7, PIN_F0, PIN_E0, PIN_B2);
   LineSensorReadContinuously(lineSensor, 0.f);
+	*/
 	while (1) {
+		/*
 		LineSensorReadArray(lineSensor, lineArray);
 		
 		if(!isBlack(lineArray[6]) || !isBlack(lineArray[7])) {
@@ -147,6 +149,7 @@ int main(void) {
 		
 		float side = lineArray[7] - lineArray[0];
 		if(lineArray[7] > .5f) {
+		
 			stopMotors();
 		} else {		
 			move(.2f, .2f);
@@ -183,7 +186,7 @@ int main(void) {
 		
 		
 		frontIRVolt=(int) (ADCRead(frontIR)*100);
-		//Printf("%d\n", frontIRVolt);
+		Printf("%d\n", frontIRVolt);
 		
 		tfrontIRVolt += frontIRVolt;
 		cfrontIRVolt += 1;
@@ -212,5 +215,5 @@ int main(void) {
 	
 	pfrontIRVolt=frontIRVolt;
 	
-
+}
 }
