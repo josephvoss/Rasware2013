@@ -49,8 +49,8 @@ void blink(void) {
 // The 'main' function is the entry point of the program
 int count=0;
 
-void turn(turnLeft) {
-	if (turnLeft) {
+void turnleft(bool left) {
+	if (left) {
 		SetMotor(leftM, 1.0f);
 		SetMotor(rightM, -1.19f);
 	}
@@ -80,6 +80,8 @@ bool isBlack(float x) {
 
 int* irServoMeasure(int* grossArrayThing) {
 	//Moves the servo returns 2 measurements of IR
+	grossArrayThing[0]=0;
+	grossArrayThing[1]=0;
 	SetServo(irServo, 1.0f);
 	Wait(1);
 	while (i<1000) {
@@ -97,19 +99,19 @@ int* irServoMeasure(int* grossArrayThing) {
 	grossArrayThing[0]=grossArrayThing[0]/1000;
 	grossArrayThing[1]=grossArrayThing[1]/1000;
 	return grossArrayThing;
-	grossArrayThing[0]=0;
-	grossArrayThing[1]=1;
-}
+	}
 
 void irServoMove(int* grossArrayThing) {
 	//takes in 2 measurements of ir and turns robrot
 	if (grossArrayThing[0] >= minVoltDis) {
 		//turn one way
-		Printf("HI left\n");
+		turnleft(false);
+		Printf("right\n");
 	}
 	else if (grossArrayThing[1] >= minVoltDis) {
 		//turn other way bruh
-		Printf("HI left\n");
+		turnleft(true);
+		Printf("left\n");
 	}
 }
 
