@@ -49,7 +49,7 @@ void blink(void) {
 // The 'main' function is the entry point of the program
 int count=0;
 
-void turnleft(bool left) {
+void turnleft(bool gleft) {
 	if (left) {
 		SetMotor(leftM, 1.0f);
 		SetMotor(rightM, -1.19f);
