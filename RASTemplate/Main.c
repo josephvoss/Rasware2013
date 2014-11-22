@@ -9,6 +9,14 @@
 #include <math.h>
 #include <RASLib/inc/time.h>
 
+///////////////////////////////////////////////////////////////////
+///////									PETER/MAURYA!
+///////					The code below is un-optimized garbage
+///////					It works but there is probably much better methods
+///////					Just a warning
+///////         -Joseph
+///////////////////////////////////////////////////////////////////
+
 tBoolean blink_on = true;
 
 tMotor* rightM;
@@ -18,12 +26,15 @@ tADC* frontIR;
 tADC* servoIR;
 tLineSensor* lineSensor; 
 int frontIRVolt;
+int pfrontIRVolt;
+int tfrontIRVolt;
+int cfrontIRVolt;
 int servoIRVolts[2];
 double leftVolt;
 double rightVolt;
 int i;
 int turnLeft;
-int minVoltDis=50;
+int minVoltDis=30;
 float irServoTurnCount = 0.0;
 float irDeltaTurn=0.25f;
 int endOfTurn;
@@ -31,65 +42,24 @@ int lineSensorArrayVolt;
 float lineArray[8];
 
 void blink(void) {
-    SetPin(PIN_F0, blink_on);
+    SetPin(PIN_F1, blink_on);
     blink_on = !blink_on;
-}
-
-void turn(void) {
-	SetServo(irServo, 0);
-	//float left = irSensor();
-	SetServo(irServo, 180);
-	//float right = irSensor();
-	//if(left > right);
-		
-}
-
-int irServoTurn(void) {
-/*	SetMotor(irServo, irDeltaTurn);
-	irServoTurnCount += irDeltaTurn;
-	if (irServoTurnCount == 1.0) {
-	leftVolt=ADCRead(servoIR);
-	//switches delta to negative to have sensor turn other way
-	irDeltaTurn = -1*irDeltaTurn;
-	endOfTurn=true;
-	}
-	if (irServoTurnCount == 0.0) {
-	rightVolt=ADCRead(servoIR);
-	irDeltaTurn = -1*irDeltaTurn;
-	endOfTurn=true;
-	}
-	if (leftVolt > rightVolt && endOfTurn) {
-		turnLeft=false;
-	}
-	if (endOfTurn) {
-		//edit for end of turn
-		turnLeft=true;
-	}
-	return turnLeft; */
-
-	////////////////////////////////// -Peter- ////////////////////////////////////
-	// Shouldn't irServo be a tServo instead of a tMotor?						 //
-	// SetMotor specifies a speed, not position									 //
-	// We should probably use SetServo(irServo, 0.0f) and SetServo(irServo, 1.0f)//
-	// https://github.com/ut-ras/Rasware2013/wiki/servo.h 						 //
-	///////////////////////////////////////////////////////////////////////////////
-
-	SetServo(irServo, 1.0f);
-	leftVolt=(int) (ADCRead(servoIR)*100);
-	SetServo(irServo, 0.0f);
-	rightVolt=(int) (ADCRead(servoIR)*100);
-	if (leftVolt<rightVolt) {
-		turnLeft=true;
-	}
-	else {
-		turnLeft=false;
-	}
-	return turnLeft;
 }
 
 // The 'main' function is the entry point of the program
 int count=0;
 
+void turn(turnLeft) {
+	if (turnLeft) {
+		SetMotor(leftM, 1.0f);
+		SetMotor(rightM, -1.19f);
+	}
+	else {
+		SetMotor(leftM, -1.0f);
+		SetMotor(rightM, 1.19f);
+	}
+}
+	
 void move(float left, float right) {
 	SetMotor(leftM, left);
 	SetMotor(rightM, right*1.19f);
@@ -111,19 +81,35 @@ bool isBlack(float x) {
 int* irServoMeasure(int* grossArrayThing) {
 	//Moves the servo returns 2 measurements of IR
 	SetServo(irServo, 1.0f);
-	grossArrayThing[0]=(int) (ADCRead(servoIR)*100);
-	SetServo(irServo, -1.0f);
-	grossArrayThing[1]=(int) (ADCRead(servoIR)*100);
+	Wait(1);
+	while (i<1000) {
+		grossArrayThing[0] +=(int) (ADCRead(servoIR)*100);
+		i += 1;
+	}
+	i=0;
+	SetServo(irServo, 0.0f);
+	Wait(1);
+		while (i<1000) {
+		grossArrayThing[1] +=(int) (ADCRead(servoIR)*100);
+		i += 1;
+	}
+	i=0; 
+	grossArrayThing[0]=grossArrayThing[0]/1000;
+	grossArrayThing[1]=grossArrayThing[1]/1000;
 	return grossArrayThing;
+	grossArrayThing[0]=0;
+	grossArrayThing[1]=1;
 }
 
 void irServoMove(int* grossArrayThing) {
 	//takes in 2 measurements of ir and turns robrot
 	if (grossArrayThing[0] >= minVoltDis) {
 		//turn one way
+		Printf("HI left\n");
 	}
 	else if (grossArrayThing[1] >= minVoltDis) {
 		//turn other way bruh
+		Printf("HI left\n");
 	}
 }
 
@@ -136,8 +122,10 @@ int main(void) {
 	irServo = InitializeServo(PIN_B3);
 	frontIR = InitializeADC(PIN_D0);
 	servoIR = InitializeADC(PIN_D1);
-	ADCReadContinuously(frontIR, 0.0f);
+	//ADCReadContinuously(frontIR, 0.0f);
 	ADCReadContinuously(servoIR, 0.0f);
+	
+	/*
 	lineSensor = InitializeGPIOLineSensor(PIN_A2, PIN_A3, PIN_A4, PIN_B6, PIN_B7, PIN_F0, PIN_E0, PIN_B2);
   LineSensorReadContinuously(lineSensor, 0.f);
 	while (1) {
@@ -149,13 +137,12 @@ int main(void) {
 			move(-.1f, .1f);
 		} else if(!isBlack(lineArray[3]) || !isBlack(lineArray[4])) {
 			move(.1f, .1f);
-		} /*else if(FRONTIR < MINDISTANCE) {
+		} else if(FRONTIR < MINDISTANCE) {
 			turn90();
-		}*/ else {
+		}*/ /*else {
 			move(.1f, .1f);
 		}
 		
-		/*
 		float side = lineArray[7] - lineArray[0];
 		if(lineArray[7] > .5f) {
 			stopMotors();
@@ -167,7 +154,7 @@ int main(void) {
 		
         // Runtime code can go here
     //Printf("Hello World!\n");
-	  /*
+		/*
 		Printf("%.2f\t",lineArray[0]);
 		Printf("%.2f\t",lineArray[1]);
 		Printf("%.2f\t",lineArray[2]);
@@ -194,35 +181,34 @@ int main(void) {
 		
 		
 		frontIRVolt=(int) (ADCRead(frontIR)*100);
-		Printf("%02d\t", frontIRVolt);
-		//servoIRVolt=(int) (ADCRead(servoIR)*100);
-		//Printf("%02d\n", servoIRVolt);
+		//Printf("%d\n", frontIRVolt);
 		
-		////////////////////////////////////////////////////////////	-Peter-	   ////////////////////////////////////////////////////
-		// If I am thinking about this correctly, won't this take forever?															 //
-		// The IR sensor will look left and right, then the robot will move a little, then the IR sensor will look around again, etc.//
-		// Until there's no longer a wall in front 																					 //
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		tfrontIRVolt += frontIRVolt;
+		cfrontIRVolt += 1;
 		
+		if (cfrontIRVolt==10000) {
+			cfrontIRVolt=0;
+			tfrontIRVolt=0;
+		}
 		
-		
-		//Measures front IR, if within wall distance, turn blue LED on
-		if (frontIRVolt >= minVoltDis) {
-			SetPin(PIN_F1, true);
-			
+		//Measures front IR, if within wall distance, do stuff
+		if (tfrontIRVolt/cfrontIRVolt >= minVoltDis) {
+				if (frontIRVolt==pfrontIRVolt) {
+			SetPin(PIN_F2, true);
+			cfrontIRVolt=0;
+			tfrontIRVolt=0;
 			irServoMeasure(servoIRVolts);
 			irServoMove(servoIRVolts);
 		}
+			else {
+				SetPin(PIN_F2, false);
+			}
+		}
 		else {
-		SetPin(PIN_F1, false);
+		SetPin(PIN_F2, false);
 	}
 	
-	/*if (servoIRVolt >= minVoltDis) {
-		SetPin(PIN_F2, true);
-	}
-	else {
-		SetPin(PIN_F2, false);
-	}*/
-}
-}
+	pfrontIRVolt=frontIRVolt;
+	
 
+}
