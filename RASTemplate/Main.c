@@ -139,11 +139,11 @@ int main(void) {
 
 		LineSensorReadArray(lineSensor, lineArray);
 		
-		if(!isBlack(lineArray[6]) || !isBlack(lineArray[7])) {
+		if(isBlack(lineArray[6]) || isBlack(lineArray[7])) {
 			move(.1f, -.1f);
-		} else if(!isBlack(lineArray[0]) || !isBlack(lineArray[1])) {
+		} else if(isBlack(lineArray[0]) || isBlack(lineArray[1])) {
 			move(-.1f, .1f);
-		} else if(!isBlack(lineArray[3]) || !isBlack(lineArray[4])) {
+		} else if(isBlack(lineArray[3]) || isBlack(lineArray[4])) {
 			move(.15f, .15f);
 		}
 		
