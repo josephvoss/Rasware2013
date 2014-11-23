@@ -11,8 +11,8 @@
 
 ///////////////////////////////////////////////////////////////////
 ///////									PETER/MAURYA!
-///////					The code below is un-optimized garbage
-///////					It works but there is probably much better methods
+///////					The code below is garbage
+///////					It works but there are definetly much better methods
 ///////					Just a warning
 ///////         -Joseph
 ///////////////////////////////////////////////////////////////////
@@ -34,7 +34,8 @@ double leftVolt;
 double rightVolt;
 int i;
 int turnLeft;
-int minVoltDis=30;
+int minVoltDis=15;
+int minVoltDisTurn=30;
 float irServoTurnCount = 0.0;
 float irDeltaTurn=0.25f;
 int endOfTurn;
@@ -51,18 +52,22 @@ int count=0;
 
 void turnleft(bool left) {
 	if (left) {
-		SetMotor(leftM, 1.0f);
-		SetMotor(rightM, -1.19f);
+		SetMotor(leftM, 0.81f);
+		SetMotor(rightM, -1.0f);
+		Printf("Turning left");
+		Wait(.95);
 	}
 	else {
-		SetMotor(leftM, -1.0f);
-		SetMotor(rightM, 1.19f);
+		SetMotor(leftM,-0.81f);
+		SetMotor(rightM, 1.0f);
+		Printf("Turning right");
+		Wait(.95);
 	}
 }
 	
 void move(float left, float right) {
 	SetMotor(leftM, left);
-	SetMotor(rightM, right*1.19f);
+	SetMotor(rightM, right*1.15f);
 }
 
 void stopMotors(void) {
@@ -103,12 +108,12 @@ int* irServoMeasure(int* grossArrayThing) {
 
 void irServoMove(int* grossArrayThing) {
 	//takes in 2 measurements of ir and turns robrot
-	if (grossArrayThing[0] >= minVoltDis) {
+	if (grossArrayThing[0] >= minVoltDisTurn) {
 		//turn one way
 		turnleft(false);
 		Printf("right\n");
 	}
-	else if (grossArrayThing[1] >= minVoltDis) {
+	else if (grossArrayThing[1] >= minVoltDisTurn) {
 		//turn other way bruh
 		turnleft(true);
 		Printf("left\n");
@@ -119,20 +124,19 @@ int main(void) {
     // Initialization code can go here
 	Printf("Not dead");
     CallEvery(blink, 0, .25);
-	rightM = InitializeServoMotor(PIN_C6, true);
-	leftM = InitializeServoMotor(PIN_E4, false);
+	rightM = InitializeServoMotor(PIN_C5, true);
+	leftM = InitializeServoMotor(PIN_B4, false);
 	irServo = InitializeServo(PIN_B3);
 	frontIR = InitializeADC(PIN_D0);
 	servoIR = InitializeADC(PIN_D1);
 	//ADCReadContinuously(frontIR, 0.0f);
 	ADCReadContinuously(servoIR, 0.0f);
 	
-	/*
 	lineSensor = InitializeGPIOLineSensor(PIN_A2, PIN_A3, PIN_A4, PIN_B6, PIN_B7, PIN_F0, PIN_E0, PIN_B2);
   LineSensorReadContinuously(lineSensor, 0.f);
-	*/
+
 	while (1) {
-		/*
+
 		LineSensorReadArray(lineSensor, lineArray);
 		
 		if(!isBlack(lineArray[6]) || !isBlack(lineArray[7])) {
@@ -140,12 +144,12 @@ int main(void) {
 		} else if(!isBlack(lineArray[0]) || !isBlack(lineArray[1])) {
 			move(-.1f, .1f);
 		} else if(!isBlack(lineArray[3]) || !isBlack(lineArray[4])) {
-			move(.1f, .1f);
-		} else if(FRONTIR < MINDISTANCE) {
-			turn90();
-		}*/ /*else {
-			move(.1f, .1f);
+			move(.15f, .15f);
 		}
+		
+		/*
+		
+		PETER WAT DIS DO
 		
 		float side = lineArray[7] - lineArray[0];
 		if(lineArray[7] > .5f) {
@@ -157,8 +161,7 @@ int main(void) {
 		*/
 		
 		
-        // Runtime code can go here
-    //Printf("Hello World!\n");
+		
 		/*
 		Printf("%.2f\t",lineArray[0]);
 		Printf("%.2f\t",lineArray[1]);
@@ -169,24 +172,16 @@ int main(void) {
 		Printf("%.2f\t",lineArray[6]);
 		Printf("%.2f\n",lineArray[7]);
 		*/
-		//go line follower function
-		
-		
-		//runLineFollower();
-		//THERE CAN ONLY BE ONE...comment
-		//(if un-comment runLineFollower, comment out this to avoid reading twice
-		//LineSensorReadArray(lineSensor, lineArray); 
 		
 		//comment out motors to avoid un-desirable enhanced robotic mobility capabilities
 		//SetMotor(leftM, .1f);
 		//SetMotor(rightM, .1185f);
 		
-		
-		//Gross icky line follower stuff
-		
+				
+		//move(.15f,.15f);
 		
 		frontIRVolt=(int) (ADCRead(frontIR)*100);
-		Printf("%d\n", frontIRVolt);
+		//Printf("%d\n", frontIRVolt);
 		
 		tfrontIRVolt += frontIRVolt;
 		cfrontIRVolt += 1;
