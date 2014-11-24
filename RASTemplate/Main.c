@@ -52,22 +52,22 @@ int count=0;
 
 void turnleft(bool left) {
 	if (left) {
-		SetMotor(leftM, 0.81f);
+		SetMotor(leftM, 1.0f);
 		SetMotor(rightM, -1.0f);
 		Printf("Turning left");
-		Wait(.95);
+		Wait(.9);
 	}
 	else {
-		SetMotor(leftM,-0.81f);
+		SetMotor(leftM,-1.0f);
 		SetMotor(rightM, 1.0f);
 		Printf("Turning right");
-		Wait(.95);
+		Wait(.9);
 	}
 }
 	
 void move(float left, float right) {
 	SetMotor(leftM, left);
-	SetMotor(rightM, right*1.15f);
+	SetMotor(rightM, right);
 }
 
 void stopMotors(void) {
@@ -136,7 +136,7 @@ int main(void) {
   LineSensorReadContinuously(lineSensor, 0.f);
 
 	while (1) {
-
+/*
 		LineSensorReadArray(lineSensor, lineArray);
 		
 		if(isBlack(lineArray[6]) || isBlack(lineArray[7])) {
@@ -146,7 +146,7 @@ int main(void) {
 		} else if(isBlack(lineArray[3]) || isBlack(lineArray[4])) {
 			move(.15f, .15f);
 		}
-		
+*/		
 		/*
 		
 		PETER WAT DIS DO
@@ -178,7 +178,7 @@ int main(void) {
 		//SetMotor(rightM, .1185f);
 		
 				
-		//move(.15f,.15f);
+		move(.15f,.15f);
 		
 		frontIRVolt=(int) (ADCRead(frontIR)*100);
 		//Printf("%d\n", frontIRVolt);
