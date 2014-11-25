@@ -108,12 +108,14 @@ int* irServoMeasure(int* arrayThing) {
 
 void irServoMove(int* arrayThing) {
 	//takes in 2 measurements of ir and turns robrot
-	if (arrayThing[0] <= arrayThing[1]) {
+	if(arrayThing[0] == arrayThing[1]) {
+		
+	} else if (arrayThing[0] >= minVoltDisTurn) {
 		//turn one way
 		turnleft(false);
 		Printf("right\n");
 	}
-	else {
+	else if (arrayThing[1] >= minVoltDisTurn) {
 		//turn other way bruh
 		turnleft(true);
 		Printf("left\n");
