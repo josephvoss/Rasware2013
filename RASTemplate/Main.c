@@ -35,7 +35,7 @@ double rightVolt;
 int i;
 int turnLeft;
 int minVoltDis=15;
-int minVoltDisTurn=30;
+int minVoltDisTurn=40;
 float irServoTurnCount = 0.0;
 float irDeltaTurn=0.25f;
 int endOfTurn;
@@ -67,7 +67,7 @@ void turnleft(bool left) {
 	
 void move(float left, float right) {
 	SetMotor(leftM, left);
-	SetMotor(rightM, right);
+	SetMotor(rightM, right*1.15);
 }
 
 void stopMotors(void) {
@@ -83,37 +83,37 @@ bool isBlack(float x) {
 	}
 }
 
-int* irServoMeasure(int* grossArrayThing) {
+int* irServoMeasure(int* arrayThing) {
 	//Moves the servo returns 2 measurements of IR
-	grossArrayThing[0]=0;
-	grossArrayThing[1]=0;
+	arrayThing[0]=0;
+	arrayThing[1]=0;
 	SetServo(irServo, 1.0f);
 	Wait(1);
 	while (i<1000) {
-		grossArrayThing[0] +=(int) (ADCRead(servoIR)*100);
+		arrayThing[0] +=(int) (ADCRead(servoIR)*100);
 		i += 1;
 	}
 	i=0;
 	SetServo(irServo, 0.0f);
 	Wait(1);
 		while (i<1000) {
-		grossArrayThing[1] +=(int) (ADCRead(servoIR)*100);
+		arrayThing[1] +=(int) (ADCRead(servoIR)*100);
 		i += 1;
 	}
 	i=0; 
-	grossArrayThing[0]=grossArrayThing[0]/1000;
-	grossArrayThing[1]=grossArrayThing[1]/1000;
-	return grossArrayThing;
+	arrayThing[0]=arrayThing[0]/1000;
+	arrayThing[1]=arrayThing[1]/1000;
+	return arrayThing;
 	}
 
-void irServoMove(int* grossArrayThing) {
+void irServoMove(int* arrayThing) {
 	//takes in 2 measurements of ir and turns robrot
-	if (grossArrayThing[0] >= minVoltDisTurn) {
+	if (arrayThing[0] <= arrayThing[1]) {
 		//turn one way
 		turnleft(false);
 		Printf("right\n");
 	}
-	else if (grossArrayThing[1] >= minVoltDisTurn) {
+	else {
 		//turn other way bruh
 		turnleft(true);
 		Printf("left\n");
@@ -127,7 +127,7 @@ int main(void) {
 	rightM = InitializeServoMotor(PIN_C5, true);
 	leftM = InitializeServoMotor(PIN_B4, false);
 	irServo = InitializeServo(PIN_B3);
-	frontIR = InitializeADC(PIN_D0);
+	frontIR = InitializeADC(PIN_D2);
 	servoIR = InitializeADC(PIN_D1);
 	//ADCReadContinuously(frontIR, 0.0f);
 	ADCReadContinuously(servoIR, 0.0f);
@@ -147,20 +147,6 @@ int main(void) {
 			move(.15f, .15f);
 		}
 */		
-		/*
-		
-		PETER WAT DIS DO
-		
-		float side = lineArray[7] - lineArray[0];
-		if(lineArray[7] > .5f) {
-		
-			stopMotors();
-		} else {		
-			move(.2f, .2f);
-		}
-		*/
-		
-		
 		
 		/*
 		Printf("%.2f\t",lineArray[0]);
@@ -178,10 +164,10 @@ int main(void) {
 		//SetMotor(rightM, .1185f);
 		
 				
-		move(.15f,.15f);
-		
+		move(.3f,.3f);
 		frontIRVolt=(int) (ADCRead(frontIR)*100);
-		//Printf("%d\n", frontIRVolt);
+		Printf("%d\n", frontIRVolt);
+		
 		
 		tfrontIRVolt += frontIRVolt;
 		cfrontIRVolt += 1;
